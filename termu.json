@@ -1,0 +1,71 @@
+{
+  "log": {
+    "logLevel": "error"
+  },
+  "dns": {
+    "hosts": {
+      "cloudflare-dns.com": "zula.ir"
+    },
+    "servers": [
+      "https://1.1.1.1/dns-query",
+      "https://8.8.8.8/dns-query",
+      "tls://8.8.8.8",
+      "tls://1.1.1.1",
+      "quic+local://unfiltered.adguard-dns.com",
+      "https://cloudflare-dns.com/dns-query",
+      "https://dns.google/dns-query",
+      {
+        "address": "8.8.8.8",
+        "domains": [
+          "full:unfiltered.adguard-dns.com",
+          "full:dns.google",
+          "full:zula.ir"
+        ]
+      }
+    ]
+  },
+  "inbounds": [
+    {
+      "tag": "socks-in",
+      "protocol": "socks",
+      "listen": "127.0.0.1",
+      "port": 10808,
+      "settings": {
+        "udp": true
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "main-out",
+      "protocol": "freedom",
+      "settings": {
+        "fragment": {
+          "packets": "tlshello",
+          "length": "10-25",
+          "interval": "10-25"
+        },
+        "noises": [
+          {
+            "type": "rand",
+            "packet": "10-55",
+            "delay": "12-30"
+          }
+        ],
+        "domainStrategy": "UseIP"
+      }
+    },
+    {
+      "tag": "dns-out",
+      "protocol": "dns"
+    }
+  ],
+  "routing": {
+    "rules": [
+      {
+        "port": 53,
+        "outboundTag": "dns-out"
+      }
+    ]
+  }
+}
